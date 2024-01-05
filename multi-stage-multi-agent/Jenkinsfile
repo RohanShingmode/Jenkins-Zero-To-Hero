@@ -17,15 +17,19 @@ pipeline {
         sh 'node --version'
       }
     }
-    stage('Run Java App') {
-            agent any
-            steps {
-                script {
-                    docker.image('maven:3.8.1-adoptopenjdk-11').inside {
-                        sh 'java -cp target/my-java-app-1.0-SNAPSHOT.jar com.example.MyJavaApp'
-                    }
-                }
+    stage('Build and Run Java App') {
+    agent {
+        docker { image 'maven:3.8.1-adoptopenjdk-11' }
+    }
+    steps {
+        sh 'mvn clean package'
+        script {
+            docker.image('maven:3.8.1-adoptopenjdk-11').inside {
+                sh 'java -cp /var/lib/jenkins/workspace/first-jenkins-job/target/my-java-app-1.0-SNAPSHOT.jar com.example.MyJavaApp'
             }
-      }
+        }
+    }
+}
+
   }
 }
