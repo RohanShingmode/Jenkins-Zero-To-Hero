@@ -21,15 +21,19 @@ pipeline {
     agent {
         docker { image 'maven:3.8.1-adoptopenjdk-11' }
     }
+  stage('Build and Run Java App') {
+    agent {
+        docker { image 'maven:3.8.1-adoptopenjdk-11' }
+    }
     steps {
-        sh 'mvn clean package'
         script {
             docker.image('maven:3.8.1-adoptopenjdk-11').inside {
+                sh 'mvn -f /var/lib/jenkins/workspace/first-jenkins-job/pom.xml clean package'
                 sh 'java -cp /var/lib/jenkins/workspace/first-jenkins-job/target/my-java-app-1.0-SNAPSHOT.jar com.example.MyJavaApp'
-            }
-        }
-    }
-}
+             }
+         }
+      }
+   }
 
   }
 }
